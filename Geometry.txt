@@ -1,0 +1,12 @@
+This file contains information on the geometry of the detectors used,
+so that it may be converted into volumes in Geant4.
+
+Glass RPC:
+- Width = 1.2m
+- Length = 1.5m
+- Height =
+- Pad width = 14cm
+- Pad length = 18cm
+- Pad gap = 1cm
+- Pad effective width = 15cm
+- Pad effective length = 19cm
