@@ -10,6 +10,12 @@ class PhysicsList : public G4VUserPhysicsList {
         ~PhysicsList() override = default;
         void ConstructParticle() override;
         void ConstructProcess() override;
+    protected:
+        static void ConstructLeptons();
+        static void ConstructBosons();
+        static void ConstructBaryons();
+        static void ConstructMesons();
+        void ConstructEM();
 };
 
 #endif //PHYSICSLIST_H
