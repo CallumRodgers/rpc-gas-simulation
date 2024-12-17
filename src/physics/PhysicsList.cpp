@@ -35,6 +35,9 @@
 #include "G4AntiNeutron.hh"
 
 // Meson headers.
+#include <G4ProcessManager.hh>
+
+
 #include "G4AntiKaonZero.hh"
 #include "G4Eta.hh"
 #include "G4EtaPrime.hh"
@@ -99,7 +102,7 @@ void PhysicsList::ConstructMesons() {
     G4KaonZeroLong::KaonZeroLongDefinition();
     G4AntiKaonZero::AntiKaonZeroDefinition();
     G4Eta::EtaDefinition();
-    G4Etac::EtacDefinition();
+    G4Etac::EtacDefinition();https://meet.google.com/ded-rmxi-dsd
     G4EtaPrime::EtaPrimeDefinition();
 }
 
@@ -107,7 +110,7 @@ void PhysicsList::ConstructMesons() {
 // Physics processes construction. //
 // ############################### //
 
-#include "G4ProcessManager.hh"
+#include "G4PhysicsListHelper.hh"
 
 // Gamma processes.
 #include "G4PhotoElectricEffect.hh"
@@ -115,15 +118,15 @@ void PhysicsList::ConstructMesons() {
 #include "G4GammaConversion.hh"
 #include "G4GammaConversionToMuons.hh"
 #include "G4GammaGeneralProcess.hh"
-#include "G4RayleighScattering.hh"
 
 // Electron-positron processes.
 #include "G4eIonisation.hh"
+#include "G4eMultipleScattering.hh"
 #include "G4ePairProduction.hh"
 #include "G4eBremsstrahlung.hh"
 #include "G4eplusAnnihilation.hh"
 #include "G4AnnihiToMuPair.hh"
-#include "G4TransportationWithMsc.hh"
+#include "G4eeToHadrons.hh"
 
 // Muon processes.
 #include "G4MuIonisation.hh"
@@ -139,55 +142,81 @@ void PhysicsList::ConstructMesons() {
 #include "G4hBremsstrahlung.hh"
 #include "G4hMultipleScattering.hh"
 
+// Decay.
+#include "G4Decay.hh"
 
 void PhysicsList::ConstructProcess() {
     // Adding transportation lets our particles travel through space and time.
     AddTransportation();
     // Constructing electromagnetic interactions.
-    ConstructEM();
+    ConstructEMAndDecay();
 }
 
-void PhysicsList::ConstructEM() {
+void PhysicsList::ConstructEMAndDecay() {
+
+    // PhysicsListHelper simplifies registering processes.
+    G4PhysicsListHelper *helper = G4PhysicsListHelper::GetPhysicsListHelper();
+
     // Particle iterator will allow us to loop through all defined particles,
     // making it easier to define the physics processes.
     auto particleIterator = GetParticleIterator();
     particleIterator->reset();
 
+    // Decay process.
+    auto decayProcess = new G4Decay();
+
     while ((*particleIterator)()) {
     	G4ParticleDefinition *particle = particleIterator->value();
-        G4ProcessManager *processManager = particle->GetProcessManager();
         G4String particleName = particle->GetParticleName();
+        G4ProcessManager *pm = particle->GetProcessManager();
+
+        // Registering decay processes.
+        if (decayProcess->IsApplicable(*particle)) {
+            pm->AddProcess(decayProcess);
+            // Process ordering.
+            pm->SetProcessOrdering(decayProcess, idxPostStep);
+            pm->SetProcessOrdering(decayProcess, idxAtRest);
+        }
+
         if (particleName == "gamma") {
             // Photon.
-            processManager->AddDiscreteProcess(new G4PhotoElectricEffect);
-            processManager->AddDiscreteProcess(new G4ComptonScattering);
-            processManager->AddDiscreteProcess(new G4GammaConversion);
-            processManager->AddDiscreteProcess(new G4GammaConversionToMuons);
-            processManager->AddDiscreteProcess(new G4GammaGeneralProcess);
-            processManager->AddDiscreteProcess(new G4RayleighScattering);
-        } else if (particleName == "e-") {
-            // Electron.
-            processManager->AddProcess(new G4TransportationWithMsc, -1, 1, 1);
-            processManager->AddProcess(new G4eIonisation, -1, 2, 2);
-            processManager->AddProcess(new G4eBremsstrahlung, -1, 3, 3);
-        } else if (particleName == "e+") {
-            // Positron.
-            processManager->AddProcess(new G4eMultipleScattering, -1, 1, 1);
-            processManager->AddProcess(new G4eIonisation, -1, 2, 2);
-            processManager->AddProcess(new G4eBremsstrahlung, -1, 3, 3);
-            processManager->AddProcess(new G4eplusAnnihilation, 0, -1, 4);
-        } else if (particleName == "mu+" || particleName == "mu-") {
+            helper->RegisterProcess(new G4PhotoElectricEffect, particle);
+            helper->RegisterProcess(new G4ComptonScattering, particle);
+            helper->RegisterProcess(new G4GammaConversion, particle);
+            helper->RegisterProcess(new G4GammaConversionToMuons, particle);
+            helper->RegisterProcess(new G4GammaGeneralProcess, particle);
+        } else if (particleName.starts_with("e")) {
+            // Either electron or positron.
+            helper->RegisterProcess(new G4eIonisation, particle);
+            helper->RegisterProcess(new G4eMultipleScattering, particle);
+            helper->RegisterProcess(new G4ePairProduction, particle);
+            helper->RegisterProcess(new G4eBremsstrahlung, particle);
+
+            if (particleName.ends_with("+")) {
+                // Positron.
+                helper->RegisterProcess(new G4eplusAnnihilation, particle);
+                helper->RegisterProcess(new G4AnnihiToMuPair, particle);
+                helper->RegisterProcess(new G4eeToHadrons, particle);
+            }
+        } else if (particleName.starts_with("mu")) {
             // Either muon.
-            processManager->AddProcess(new G4MuMultipleScattering, -1, 1, 1);
-            processManager->AddProcess(new G4MuIonisation, -1, 2, 2);
-            processManager->AddProcess(new G4MuBremsstrahlung, -1, 3, 3);
-            processManager->AddProcess(new G4MuPairProduction, -1, 4, 4);
-        } else if ((!particle->IsShortLived()) &&
-                   (particle->GetPDGCharge() != 0.0) &&
-                   (particle->GetParticleName() != "chargedgeantino")) {
-            // all others charged particles except geantino
-            processManager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
-            processManager->AddProcess(new G4hIonisation, -1, 2, 2);
+            helper->RegisterProcess(new G4MuIonisation, particle);
+            helper->RegisterProcess(new G4MuMultipleScattering, particle);
+            helper->RegisterProcess(new G4MuPairProduction, particle);
+            helper->RegisterProcess(new G4MuBremsstrahlung, particle);
+            helper->RegisterProcess(new G4MuonToMuonPairProduction, particle);
+        } else if ((particle->GetPDGCharge() != 0.0) and (particleName != "chargedgeantino")) {
+            // By now we're dealing with only charged ions/hadrons
+            if (particle->IsGeneralIon()) {
+                helper->RegisterProcess(new G4ionIonisation, particle);
+            } else {
+                helper->RegisterProcess(new G4hIonisation, particle);
+                helper->RegisterProcess(new G4hMultipleScattering, particle);
+                helper->RegisterProcess(new G4hPairProduction, particle);
+                helper->RegisterProcess(new G4hBremsstrahlung, particle);
+            }
         }
     }
+
+    delete decayProcess;
 }

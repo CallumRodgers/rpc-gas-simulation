@@ -15,7 +15,7 @@ class PhysicsList : public G4VUserPhysicsList {
         static void ConstructBosons();
         static void ConstructBaryons();
         static void ConstructMesons();
-        void ConstructEM();
+        void ConstructEMAndDecay();
 };
 
 #endif //PHYSICSLIST_H
