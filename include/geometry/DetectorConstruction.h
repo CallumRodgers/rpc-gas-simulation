@@ -12,6 +12,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
         explicit DetectorConstruction(int type);
         ~DetectorConstruction() override = default;
         G4VPhysicalVolume* Construct() override;
+        void ConstructSDandField() override;
 };
 
 #endif //DETECTORCONSTRUCTION_H

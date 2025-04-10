@@ -1,0 +1,10 @@
+/run/initialize
+
+/gps/pos/type Surface
+/gps/pos/shape Sphere
+/gps/pos/radius 2.0 m
+
+/gps/ang/type cos
+/gps/ang/maxtheta 180 deg
+/run/beamOn 1
+

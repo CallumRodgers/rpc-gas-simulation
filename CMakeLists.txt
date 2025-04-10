@@ -4,6 +4,7 @@ project(rpc_gas_simulation)
 set(CMAKE_CXX_STANDARD 20)
 
 set(PROJECT_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Finding Geant4.
@@ -23,6 +24,9 @@ set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 # Grouping all sources and headers we have.
 file(GLOB sources ${SRC_DIR}/*.cpp ${SRC_DIR}/geometry/*.cpp ${SRC_DIR}/physics/*.cpp)
 file(GLOB headers ${INCLUDE_DIR}/*.h ${INCLUDE_DIR}/geometry/*.h ${SRC_DIR}/physics/*.h)
+
+file(GLOB MACRO_FILES "macros/*.mac")
+file(COPY ${MACRO_FILES} DESTINATION ${CMAKE_BINARY_DIR}/)
 
 # Linking sources and headers to our executable, as well as libraries.
 add_executable(rpc_gas_simulation ${sources} ${headers})

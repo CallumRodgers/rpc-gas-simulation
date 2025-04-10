@@ -1,0 +1,25 @@
+/run/initialize
+/vis/open OGLIQt
+
+/vis/drawVolume
+
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
+/vis/scene/add/eventID
+
+/vis/viewer/set/viewpointThetaPhi 60 45
+/vis/viewer/zoom 1
+/vis/viewer/set/background 0 0 0.1 1
+
+/vis/geometry/set/colour AluminumLog 0 0.7 0.7 0.7
+/vis/geometry/set/colour CopperLog 0 0.9 0.4 0.0
+/vis/geometry/set/colour GasLog(Outside) 0 1 0 0
+/vis/geometry/set/colour GasLog(Inside) 0 1 0 0
+/vis/geometry/set/colour FibreGlassLog 0 1 0.8 0.4
+
+/vis/geometry/set/daughtersInvisible World 5 false
+/vis/geometry/set/forceCloud GasLog(Outside) 0 true
+/vis/geometry/set/forceCloud GasLog(Inside) 0 true
+/vis/geometry/set/forceSolid CopperLog 0 true
+/vis/geometry/set/forceSolid FibreGlassLog 0 true
+
