@@ -1,5 +1,5 @@
 /run/initialize
-/vis/open OGLIQt
+/vis/open OGL
 
 /vis/drawVolume
 
