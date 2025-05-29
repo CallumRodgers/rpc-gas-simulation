@@ -3,6 +3,10 @@
 // Geant4 includes.
 #include "G4RunManagerFactory.hh"
 #include "G4UImanager.hh"
+#include "G4VisManager.hh"
+#include "G4VisExecutive.hh"
+#include "G4UIExecutive.hh"
+#include "QBBC.hh"
 
 // User includes.
 #include "geometry/DetectorConstruction.h"
@@ -27,29 +31,33 @@ int main(int argc, char** argv) {
     // #####################
 
     // Creating our run manager.
+    auto ui = new G4UIExecutive(argc, argv);
     auto runManager = G4RunManagerFactory::CreateRunManager();
 
     std::cout << "RunManager initialized." << std::endl;
 
     // Setting up required information for kernel initialization.
     runManager->SetUserInitialization(new DetectorConstruction(rpcType));
-    runManager->SetUserInitialization(new PhysicsList());
+    runManager->SetUserInitialization(new QBBC);
     runManager->SetUserInitialization(new ActionInitialization());
 
     // Initialize G4 kernel.
     runManager->Initialize();
 
+    // Visualization
+    G4VisManager* visManager = new G4VisExecutive();
+    visManager->Initialize();
+
     // Get pointer to the UI manager (created during RunManager initialization) and set verbosities.
     G4UImanager* UI = G4UImanager::GetUIpointer();
-    UI->ApplyCommand("/run/verbose 1");
-    UI->ApplyCommand("/event/verbose 1");
-    UI->ApplyCommand("/tracking/verbose 1");
+    UI->ApplyCommand("/control/execute ../macros/vis.mac");
+    UI->ApplyCommand("/control/execute ../macros/run.mac");
 
-    // Start run.
-    G4int numberOfEvents = 3;
-    runManager->BeamOn(numberOfEvents);
+    ui->SessionStart();
 
     // Terminating application.
+    delete visManager;
     delete runManager;
+    delete ui;
     return 0;
 }
