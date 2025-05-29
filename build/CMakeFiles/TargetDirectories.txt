@@ -1,0 +1,4 @@
+/Users/thiagorangel/UERJ/RPC/build/CMakeFiles/sim.dir
+/Users/thiagorangel/UERJ/RPC/build/CMakeFiles/RPC_Simulation.dir
+/Users/thiagorangel/UERJ/RPC/build/CMakeFiles/edit_cache.dir
+/Users/thiagorangel/UERJ/RPC/build/CMakeFiles/rebuild_cache.dir
