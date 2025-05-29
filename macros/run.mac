@@ -1,10 +1,13 @@
 /run/initialize
 
+/gps/ang/type cos
+/gps/ang/mintheta 0.0 deg
+/gps/ang/maxtheta 180.0 deg
+
 /gps/pos/type Surface
 /gps/pos/shape Sphere
-/gps/pos/radius 2.0 m
+/gps/pos/centre 0.0 0.0 0.0 m
+/gps/pos/radius 5.0 m
 
-/gps/ang/type cos
-/gps/ang/maxtheta 180 deg
-/run/beamOn 1
+/run/beamOn 40
 

@@ -22,7 +22,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction() {
     auto *muPlus = table->FindParticle("mu+");
     auto *muMinus = table->FindParticle("mu-");
 
-    fParticleSource->SetParticleDefinition(muMinus);
+
+    fParticleSource->SetParticleDefinition(muPlus);
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {

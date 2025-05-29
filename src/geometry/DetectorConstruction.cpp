@@ -4,16 +4,18 @@
 
 #include "geometry/DetectorConstruction.h"
 
+#include <G4Sphere.hh>
 #include <stdexcept>
 
-#include "G4Material.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
+#include "G4Material.hh"
+#include "G4NistManager.hh"
 #include "G4PVPlacement.hh"
+#include "G4SDManager.hh"
 #include "G4ThreeVector.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4NistManager.hh"
-#include "G4VSensitiveDetector.hh"
+#include "geometry/SensitiveDetector.h"
 
 using namespace CLHEP;
 
@@ -35,7 +37,7 @@ DetectorConstruction::DetectorConstruction(const int type) {
  * Creates the detector geometry representing the glass RPC.
  * @return the physical volume containing the glass RPC.
  */
-G4VPhysicalVolume* ConstructGlassRPC() {
+G4VPhysicalVolume* DetectorConstruction::ConstructGlassRPC() {
 
     G4NistManager* man = G4NistManager::Instance();
 
@@ -83,6 +85,7 @@ G4VPhysicalVolume* ConstructGlassRPC() {
     G4area dAluminum = {165.0 * cm, 128.5 * cm};
     G4double dAluminumThickness = 2.5 * cm;
     G4area dGraphite = {148.5 * cm, 119 * cm};
+    G4area dPad = {18.5 * cm, 14.5 * cm};
     G4area dDetector = dGraphite;
     G4double dCopperThickness = 35.0 * um;
     G4double dGlassFiberThickness = 1.0 * mm;
@@ -97,8 +100,8 @@ G4VPhysicalVolume* ConstructGlassRPC() {
     G4double dWorld_y = 2.0 * m;
     G4double dWorld_z = 4.0 * m;
 
-    auto worldBox = new G4Box("World", dWorld_x, dWorld_y, dWorld_z);
-    auto worldLog = new G4LogicalVolume(worldBox, mAir, "World");
+    auto worldSphere = new G4Sphere("World", 0.0 * cm, 5.0 * m, 0.0, 2.0 * pi * rad, 0.0, pi * rad);
+    auto worldLog = new G4LogicalVolume(worldSphere, mAir, "World");
     G4VPhysicalVolume* worldPhysical = new G4PVPlacement(nullptr,
         G4ThreeVector(0, 0, 0),
         worldLog,
@@ -146,6 +149,30 @@ G4VPhysicalVolume* ConstructGlassRPC() {
         dAcrylic.x / 2.0, dAcrylic.y / 2.0, dCopperThickness / 2.0);
     auto copperLog = new G4LogicalVolume(copperBox, mCopper, "CopperLog");
 
+    auto padBox = new G4Box("Pad Box",
+        dPad.x / 2.0, dPad.y / 2.0, dCopperThickness / 2.0);
+    logicPad = new G4LogicalVolume(padBox, mCopper, "PadLog");
+
+    G4double padZ = acrylicBox->GetZHalfLength() + fibreGlassBox->GetZHalfLength()*2.0 + copperBox->GetZHalfLength() * 2.5;
+    G4double offset = 0.5 * cm;
+    for (int i = 0; i < 8; i++) {
+        G4double padX = -copperBox->GetXHalfLength() + offset + padBox->GetXHalfLength();
+        padX += i * (dPad.x + offset);
+        for (int j = 0; j < 8; j++) {
+            G4double padY = -copperBox->GetYHalfLength() + offset + padBox->GetYHalfLength();
+            padY += j * (dPad.y + offset);
+            auto physicalPad = new G4PVPlacement(
+            nullptr,
+            G4ThreeVector(padX, padY, padZ),
+            logicPad,
+            "Pad" + std::to_string(i * 8 + j + 1),
+            outerGasLog,
+            false,
+            0,
+            true
+        );
+        }
+    }
 
     // ############ //
     // GLASS BODIES //
@@ -219,7 +246,7 @@ G4VPhysicalVolume* ConstructGlassRPC() {
  * Creates the detector geometry of CERN's iRPC prototype.
  * @return the physical volume representing the whole iRPC.
  */
-G4VPhysicalVolume* ConstructiRPCPrototype() {
+G4VPhysicalVolume* DetectorConstruction::ConstructiRPCPrototype() {
     // TODO: Implement CERN iRPC geometry.
 }
 
@@ -242,7 +269,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
  * Constructing pads and field.
  */
 void DetectorConstruction::ConstructSDandField() {
-
+    SensitiveDetector *pad_detector = new SensitiveDetector("PadDetector");
+    logicPad->SetSensitiveDetector(pad_detector);
+    G4SDManager::GetSDMpointer()->AddNewDetector(pad_detector);
 }
 
 

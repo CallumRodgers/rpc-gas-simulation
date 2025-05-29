@@ -13,6 +13,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
         ~DetectorConstruction() override = default;
         G4VPhysicalVolume* Construct() override;
         void ConstructSDandField() override;
+        G4LogicalVolume* logicPad;
+        G4LogicalVolume* logicGasBox;
+
+    private:
+        G4VPhysicalVolume* ConstructGlassRPC();
+        G4VPhysicalVolume* ConstructiRPCPrototype();
 };
 
 #endif //DETECTORCONSTRUCTION_H

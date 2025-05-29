@@ -50,10 +50,8 @@ int main(int argc, char** argv) {
 
     // Get pointer to the UI manager (created during RunManager initialization) and set verbosities.
     G4UImanager* UI = G4UImanager::GetUIpointer();
-    UI->ApplyCommand("/run/verbose 1");
-    UI->ApplyCommand("/event/verbose 1");
-    UI->ApplyCommand("/tracking/verbose 1");
     UI->ApplyCommand("/control/execute ../macros/vis.mac");
+    UI->ApplyCommand("/control/execute ../macros/run.mac");
 
     ui->SessionStart();
 

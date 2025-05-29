@@ -6,6 +6,7 @@
 /vis/scene/add/trajectories smooth
 /vis/scene/endOfEventAction accumulate
 /vis/scene/add/eventID
+/vis/scene/add/axes
 
 /vis/viewer/set/viewpointThetaPhi 60 45
 /vis/viewer/zoom 1

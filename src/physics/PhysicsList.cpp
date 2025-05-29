@@ -51,14 +51,33 @@
 #include "G4PionPlus.hh"
 #include "G4PionZero.hh"
 
-void PhysicsList::ConstructParticle() {
-    // Constructing all particles to be simulated in the experiment.
-    // It includes both primary particles and particles generated from them (decays, etc.)
-    ConstructLeptons();
-    ConstructBosons();
-    ConstructBaryons();
-    ConstructMesons();
+#include "G4VModularPhysicsList.hh"
+#include "G4EmStandardPhysics.hh"
+#include "G4RadioactiveDecayPhysics.hh"
+#include "G4DecayPhysics.hh"
+
+PhysicsList::PhysicsList() {
+    // EM Physics
+    RegisterPhysics(new G4EmStandardPhysics());
+
+    // Radioactive decay physics
+    RegisterPhysics(new G4RadioactiveDecayPhysics());
+
+    // Decay physics
+    RegisterPhysics(new G4DecayPhysics());
 }
+
+ PhysicsList::~PhysicsList() {}
+
+
+//void PhysicsList::ConstructParticle() {
+//    // Constructing all particles to be simulated in the experiment.
+//    // It includes both primary particles and particles generated from them (decays, etc.)
+//    ConstructLeptons();
+//    ConstructBosons();
+//    ConstructBaryons();
+//    ConstructMesons();
+//}
 
 void PhysicsList::ConstructLeptons() {
     G4Electron::ElectronDefinition();
@@ -102,7 +121,7 @@ void PhysicsList::ConstructMesons() {
     G4KaonZeroLong::KaonZeroLongDefinition();
     G4AntiKaonZero::AntiKaonZeroDefinition();
     G4Eta::EtaDefinition();
-    G4Etac::EtacDefinition();https://meet.google.com/ded-rmxi-dsd
+    G4Etac::EtacDefinition();
     G4EtaPrime::EtaPrimeDefinition();
 }
 
@@ -145,12 +164,12 @@ void PhysicsList::ConstructMesons() {
 // Decay.
 #include "G4Decay.hh"
 
-void PhysicsList::ConstructProcess() {
-    // Adding transportation lets our particles travel through space and time.
-    AddTransportation();
-    // Constructing electromagnetic interactions.
-    ConstructEMAndDecay();
-}
+//void PhysicsList::ConstructProcess() {
+//    // Adding transportation lets our particles travel through space and time.
+//    AddTransportation();
+//    // Constructing electromagnetic interactions.
+//    ConstructEMAndDecay();
+//}
 
 void PhysicsList::ConstructEMAndDecay() {
 
