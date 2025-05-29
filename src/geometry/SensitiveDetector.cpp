@@ -1,6 +1,3 @@
-//
-// Created by callum on 23/04/25.
-//
 
 #include "geometry/SensitiveDetector.h"
 #include "G4VSensitiveDetector.hh"

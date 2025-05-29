@@ -1,6 +1,3 @@
-//
-// Created by callum on 24/11/24.
-//
 
 #include "geometry/DetectorConstruction.h"
 

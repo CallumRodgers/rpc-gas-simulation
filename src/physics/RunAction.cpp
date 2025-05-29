@@ -1,6 +1,3 @@
-//
-// Created by callum on 24/04/25.
-//
 
 #include "physics/RunAction.h"
 

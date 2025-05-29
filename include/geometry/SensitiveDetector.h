@@ -1,6 +1,3 @@
-//
-// Created by callum on 23/04/25.
-//
 
 #ifndef SENSITIVEDETECTOR_H
 #define SENSITIVEDETECTOR_H

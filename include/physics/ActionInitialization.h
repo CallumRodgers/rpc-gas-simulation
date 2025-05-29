@@ -1,6 +1,3 @@
-//
-// Created by callum on 26/11/24.
-//
 
 #ifndef ACTIONINITIALIZATION_H
 #define ACTIONINITIALIZATION_H
