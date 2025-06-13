@@ -15,7 +15,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
 
     G4Material* worldMat = nist->FindOrBuildMaterial("G4_AIR");
     G4double rWorld = 1.5 * m;
-    G4Sphere* solidWorld = new G4Sphere("World", 0., rWorld, 0., 2 * CLHEP::pi, 0., CLHEP::pi);      
+    G4Sphere* solidWorld = new G4Sphere("World", 0., rWorld, 0., 2*CLHEP::pi, 0., CLHEP::pi);      
 
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "physWorld", 0, false, 0, checkOverlaps);

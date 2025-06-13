@@ -10,23 +10,26 @@
 #include "G4ThreeVector.hh"
 #include "G4ios.hh"
 
+
 PMSensitiveDetector::PMSensitiveDetector(G4String name)
     : G4VSensitiveDetector(name)
 {
     fTotalEnergyDeposited = 0.;
-    fHitsPerPad.resize(64, 0);
-    fEdepPerPad.resize(64, 0.);
+    fHitsPerPad.resize(65, 0);
+    fEdepPerPad.resize(65, 0.);
 }
+
 
 PMSensitiveDetector::~PMSensitiveDetector() {}
 
+
 void PMSensitiveDetector::Initialize(G4HCofThisEvent *)
 {
-    fPadsHitThisEvent.clear();
     fTotalEnergyDeposited = 0.;
     std::fill(fHitsPerPad.begin(), fHitsPerPad.end(), 0);
     std::fill(fEdepPerPad.begin(), fEdepPerPad.end(), 0.);
 }
+
 
 G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
 {
@@ -35,29 +38,19 @@ G4bool PMSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
 
     if (energyDeposited > 0)
     {
+        fTotalEnergyDeposited += energyDeposited;
+
         G4TouchableHandle touchable = preStepPoint->GetTouchableHandle();
-        G4int padID = touchable->GetCopyNumber();
+        G4int padID = touchable->GetCopyNumber(); 
 
-        if (padID >= 0 && padID < 64)
+        if (padID > 0 && padID < 65)
         {
-            auto insertResult = fPadsHitThisEvent.insert(padID);
-            if (fPadsHitThisEvent.size() > 1) {
-                return false;
-            }
-
-            if (insertResult.second) {
-                fTotalEnergyDeposited += energyDeposited;
-                fHitsPerPad[padID]++;
-                fEdepPerPad[padID] += energyDeposited;
-
-                G4cout << "Pad sensibilizado: ID = " << padID
-                       << " | Energia depositada = " << energyDeposited / keV << " keV"
-                       << G4endl;
-            }
+            fHitsPerPad[padID]++;
+            fEdepPerPad[padID] += energyDeposited;
         }
         else
         {
-            G4cerr << "Warning: padID fora do intervalo esperado: " << padID << G4endl;
+            G4cerr << "Warning: padID fora do intervalo esperado (1 a 64): " << padID << G4endl;
         }
     }
 
@@ -69,12 +62,18 @@ void PMSensitiveDetector::EndOfEvent(G4HCofThisEvent *)
     G4AnalysisManager *analysisManager = G4AnalysisManager::Instance();
 
     analysisManager->FillH1(0, fTotalEnergyDeposited);
-    for (G4int i = 0; i < 64; ++i)
+    for (G4int padID = 1; padID <= 64; ++padID)
     {
-        for (G4int j = 0; j < fHitsPerPad[i]; ++j)
+        for (G4int hitCount = 0; hitCount < fHitsPerPad[padID]; ++hitCount)
         {
-            analysisManager->FillH1(1, i);
-            analysisManager->FillH1(2, i, fEdepPerPad[i]);
+            analysisManager->FillH1(1, padID); 
+        }
+    }
+        
+    for (G4int i = 1; i <= 64; ++i)
+    {
+        if (fEdepPerPad[i] > 0) {
+            analysisManager->FillH1(2, i, fEdepPerPad[i]); 
         }
     }
     G4cout << "Deposited energy (event): " << fTotalEnergyDeposited / MeV << " MeV" << G4endl;

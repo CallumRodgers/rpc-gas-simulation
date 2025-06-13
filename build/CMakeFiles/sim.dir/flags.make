@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = -DG4LIB_BUILD_DLL -DG4UI_USE_QT -DG4VIS_USE_OPENGLQT -DG4VIS_USE_OPENGLX -DG4VIS_USE_QT3D -DG4VIS_USE_TOOLSSG_QT_GLES -DG4VIS_USE_TOOLSSG_QT_ZB -DG4VIS_USE_TOOLSSG_X11_GLES -DG4VIS_USE_TOOLSSG_X11_ZB -DPTL_BUILD_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB
 
-CXX_INCLUDES = -I/Users/thiagorangel/UERJ/RPC/include -isystem /Users/thiagorangel/Softwares/Geant4/geant4-install/include/Geant4 -iframework /usr/local/opt/qt@5/lib -isystem /usr/local/opt/qt@5/lib/QtCore.framework/Headers -isystem /usr/local/opt/qt@5/./mkspecs/macx-clang -isystem /usr/local/opt/qt@5/lib/QtGui.framework/Headers -isystem /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework/Headers -isystem /usr/local/opt/qt@5/lib/QtWidgets.framework/Headers -isystem /usr/local/include
+CXX_INCLUDES = -I/Users/thiagorangel/UERJ/RPC/include -isystem /Users/thiagorangel/Softwares/Geant4/geant4-install/include/Geant4 -iframework /usr/local/opt/qt@5/lib -isystem /usr/local/opt/qt@5/lib/QtCore.framework/Headers -isystem /usr/local/opt/qt@5/./mkspecs/macx-clang -isystem /usr/local/opt/qt@5/lib/QtGui.framework/Headers -isystem /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework/Headers -isystem /usr/local/opt/qt@5/lib/QtWidgets.framework/Headers -isystem /usr/local/include -isystem /Users/thiagorangel/Softwares/Garfield/garfield-install/include -isystem /usr/local/include/root
 
-CXX_FLAGS = -std=gnu++17 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -fPIC
+CXX_FLAGS = -std=gnu++17 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -fPIC
 

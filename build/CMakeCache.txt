@@ -137,7 +137,7 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=
 
 //The product will be built against the headers and libraries located
 // inside the indicated SDK.
-CMAKE_OSX_SYSROOT:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk
+CMAKE_OSX_SYSROOT:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk
 
 //No help, variable specified on the command line.
 CMAKE_PREFIX_PATH:UNINITIALIZED=/usr/local/opt/qt@5
@@ -216,29 +216,56 @@ CMAKE_TAPI:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/tapi
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//The directory containing a CMake configuration file for Degrade.
+Degrade_DIR:PATH=/Users/thiagorangel/Softwares/Garfield/garfield-install/lib/cmake/Degrade
+
 //Path to a file.
-EXPAT_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/include
+EXPAT_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include
 
 //Path to a library.
 EXPAT_LIBRARY_DEBUG:FILEPATH=EXPAT_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
-EXPAT_LIBRARY_RELEASE:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/lib/libexpat.tbd
+EXPAT_LIBRARY_RELEASE:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/lib/libexpat.tbd
+
+//Path to a library.
+GSL_CBLAS_LIBRARY:FILEPATH=/usr/local/lib/libgslcblas.dylib
+
+//Path to a library.
+GSL_CBLAS_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libgslcblas.dylib
+
+//Path to a program.
+GSL_CONFIG_EXECUTABLE:FILEPATH=/usr/local/bin/gsl-config
+
+//Path to a file.
+GSL_INCLUDE_DIR:PATH=/usr/local/include
+
+//Path to a library.
+GSL_LIBRARY:FILEPATH=/usr/local/lib/libgsl.dylib
+
+//Path to a library.
+GSL_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libgsl.dylib
+
+//The directory containing a CMake configuration file for Garfield.
+Garfield_DIR:PATH=/Users/thiagorangel/Softwares/Garfield/garfield-install/lib/cmake/Garfield
 
 //The directory containing a CMake configuration file for Geant4.
 Geant4_DIR:PATH=/Users/thiagorangel/Softwares/Geant4/geant4-install/lib/cmake/Geant4
 
+//The directory containing a CMake configuration file for Magboltz.
+Magboltz_DIR:PATH=/Users/thiagorangel/Softwares/Garfield/garfield-install/lib/cmake/Magboltz
+
 //Include for the OpenGL GLU library
-OPENGL_GLU_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework
+OPENGL_GLU_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework
 
 //Include for OpenGL
-OPENGL_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework
+OPENGL_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework
 
 //OpenGL GL library
-OPENGL_gl_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework
+OPENGL_gl_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework
 
 //OpenGL GLU library
-OPENGL_glu_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework
+OPENGL_glu_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -282,6 +309,111 @@ Qt5OpenGL_DIR:PATH=/usr/local/opt/qt@5/lib/cmake/Qt5OpenGL
 //The directory containing a CMake configuration file for Qt5Widgets.
 Qt5Widgets_DIR:PATH=/usr/local/opt/qt@5/lib/cmake/Qt5Widgets
 
+//Path to a library.
+ROOT_Core_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libCore.so
+
+//The directory containing a CMake configuration file for ROOT.
+ROOT_DIR:PATH=/usr/local/share/root/cmake
+
+//Path to a library.
+ROOT_Gdml_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libGdml.so
+
+//Path to a library.
+ROOT_Geom_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libGeom.so
+
+//Path to a library.
+ROOT_Gpad_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libGpad.so
+
+//Path to a library.
+ROOT_Graf3d_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libGraf3d.so
+
+//Path to a library.
+ROOT_Graf_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libGraf.so
+
+//Path to a library.
+ROOT_Hist_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libHist.so
+
+//Path to a library.
+ROOT_Imt_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libImt.so
+
+//Path to a library.
+ROOT_MathCore_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libMathCore.so
+
+//Path to a library.
+ROOT_Matrix_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libMatrix.so
+
+//Path to a library.
+ROOT_MultiProc_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libMultiProc.so
+
+//Path to a library.
+ROOT_Net_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libNet.so
+
+//Path to a library.
+ROOT_Physics_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libPhysics.so
+
+//Path to a library.
+ROOT_Postscript_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libPostscript.so
+
+//Path to a library.
+ROOT_RIO_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libRIO.so
+
+//Path to a library.
+ROOT_ROOTDataFrame_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libROOTDataFrame.so
+
+//Path to a library.
+ROOT_ROOTVecOps_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libROOTVecOps.so
+
+//Path to a library.
+ROOT_Rint_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libRint.so
+
+//Path to a library.
+ROOT_Thread_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libThread.so
+
+//Path to a library.
+ROOT_TreePlayer_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libTreePlayer.so
+
+//Path to a library.
+ROOT_Tree_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libTree.so
+
+//Path to a program.
+ROOT_genmap_CMD:FILEPATH=ROOT_genmap_CMD-NOTFOUND
+
+//Path to a program.
+ROOT_genreflex_CMD:FILEPATH=/usr/local/bin/genreflex
+
+//Path to a program.
+ROOT_hadd_CMD:FILEPATH=/usr/local/bin/hadd
+
+//Path to a program.
+ROOT_root_CMD:FILEPATH=/usr/local/bin/root
+
+//Path to a program.
+ROOT_rootbrowse_CMD:FILEPATH=/usr/local/bin/rootbrowse
+
+//Path to a program.
+ROOT_rootcint_CMD:FILEPATH=/usr/local/bin/rootcint
+
+//Path to a program.
+ROOT_rootcling_CMD:FILEPATH=/usr/local/bin/rootcling
+
+//Path to a program.
+ROOT_rootcp_CMD:FILEPATH=/usr/local/bin/rootcp
+
+//Path to a program.
+ROOT_rootdraw_CMD:FILEPATH=ROOT_rootdraw_CMD-NOTFOUND
+
+//Path to a program.
+ROOT_rootls_CMD:FILEPATH=/usr/local/bin/rootls
+
+//Path to a program.
+ROOT_rootmkdir_CMD:FILEPATH=/usr/local/bin/rootmkdir
+
+//Path to a program.
+ROOT_rootmv_CMD:FILEPATH=/usr/local/bin/rootmv
+
+//Path to a program.
+ROOT_rootrm_CMD:FILEPATH=/usr/local/bin/rootrm
+
 //Value Computed by CMake
 RPC_Simulation_BINARY_DIR:STATIC=/Users/thiagorangel/UERJ/RPC/build
 
@@ -290,6 +422,15 @@ RPC_Simulation_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 RPC_Simulation_SOURCE_DIR:STATIC=/Users/thiagorangel/UERJ/RPC
+
+//Path to a file.
+VDT_INCLUDE_DIR:PATH=/usr/local/Cellar/root/6.32.08/include/root
+
+//Path to a library.
+VDT_LIBRARY:FILEPATH=/usr/local/Cellar/root/6.32.08/lib/root/libvdt.dylib
+
+//Build example with Geant4 UI and Vis drivers
+WITH_GEANT4_UIVIS:BOOL=ON
 
 //Path to a file.
 X11_ICE_INCLUDE_PATH:PATH=/usr/local/include
@@ -877,19 +1018,33 @@ EXPAT_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: EXPAT_LIBRARY_RELEASE
 EXPAT_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //Details about finding EXPAT
-FIND_PACKAGE_MESSAGE_DETAILS_EXPAT:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/lib/libexpat.tbd][/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/include][v2.6.3(2.6.3)]
+FIND_PACKAGE_MESSAGE_DETAILS_EXPAT:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/lib/libexpat.tbd][/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include][v2.7.1(2.6.3)]
+//Details about finding GSL
+FIND_PACKAGE_MESSAGE_DETAILS_GSL:INTERNAL=[/usr/local/include][/usr/local/lib/libgsl.dylib][/usr/local/lib/libgslcblas.dylib][v2.8()]
 //Details about finding Geant4
 FIND_PACKAGE_MESSAGE_DETAILS_Geant4:INTERNAL=[/Users/thiagorangel/Softwares/Geant4/geant4-install/lib/cmake/Geant4/Geant4Config.cmake][v11.3.0()]
 //Details about finding OpenGL
-FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework][/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/System/Library/Frameworks/OpenGL.framework][c ][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework][/Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/OpenGL.framework][c ][v()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
+//Details about finding Vdt
+FIND_PACKAGE_MESSAGE_DETAILS_Vdt:INTERNAL=[/usr/local/Cellar/root/6.32.08/include/root][/usr/local/Cellar/root/6.32.08/lib/root/libvdt.dylib][v0.4()]
 //Details about finding X11
 FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/local/include][/usr/local/lib/libX11.dylib][c ][v()]
 //Details about finding XQuartzGL
 FIND_PACKAGE_MESSAGE_DETAILS_XQuartzGL:INTERNAL=[/usr/local/include][/usr/local/lib/libGL.dylib][v()]
 //Details about finding XercesC
 FIND_PACKAGE_MESSAGE_DETAILS_XercesC:INTERNAL=[/usr/local/lib/libxerces-c.dylib][/usr/local/include][3.3.0][v3.3.0(3.3.0)]
+//ADVANCED property for variable: GSL_CBLAS_LIBRARY
+GSL_CBLAS_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GSL_CBLAS_LIBRARY_DEBUG
+GSL_CBLAS_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GSL_INCLUDE_DIR
+GSL_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GSL_LIBRARY
+GSL_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GSL_LIBRARY_DEBUG
+GSL_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLU_INCLUDE_DIR
 OPENGL_GLU_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_INCLUDE_DIR
@@ -902,6 +1057,74 @@ OPENGL_glu_LIBRARY-ADVANCED:INTERNAL=1
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Core_LIBRARY
+ROOT_Core_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Gdml_LIBRARY
+ROOT_Gdml_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Geom_LIBRARY
+ROOT_Geom_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Gpad_LIBRARY
+ROOT_Gpad_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Graf3d_LIBRARY
+ROOT_Graf3d_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Graf_LIBRARY
+ROOT_Graf_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Hist_LIBRARY
+ROOT_Hist_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Imt_LIBRARY
+ROOT_Imt_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_MathCore_LIBRARY
+ROOT_MathCore_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Matrix_LIBRARY
+ROOT_Matrix_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_MultiProc_LIBRARY
+ROOT_MultiProc_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Net_LIBRARY
+ROOT_Net_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Physics_LIBRARY
+ROOT_Physics_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Postscript_LIBRARY
+ROOT_Postscript_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_RIO_LIBRARY
+ROOT_RIO_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_ROOTDataFrame_LIBRARY
+ROOT_ROOTDataFrame_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_ROOTVecOps_LIBRARY
+ROOT_ROOTVecOps_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Rint_LIBRARY
+ROOT_Rint_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Thread_LIBRARY
+ROOT_Thread_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_TreePlayer_LIBRARY
+ROOT_TreePlayer_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_Tree_LIBRARY
+ROOT_Tree_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_genreflex_CMD
+ROOT_genreflex_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_hadd_CMD
+ROOT_hadd_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_root_CMD
+ROOT_root_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootbrowse_CMD
+ROOT_rootbrowse_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootcint_CMD
+ROOT_rootcint_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootcling_CMD
+ROOT_rootcling_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootcp_CMD
+ROOT_rootcp_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootls_CMD
+ROOT_rootls_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootmkdir_CMD
+ROOT_rootmkdir_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootmv_CMD
+ROOT_rootmv_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ROOT_rootrm_CMD
+ROOT_rootrm_CMD-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: VDT_INCLUDE_DIR
+VDT_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: VDT_LIBRARY
+VDT_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_ICE_INCLUDE_PATH
 X11_ICE_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_ICE_LIB
