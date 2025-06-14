@@ -176,7 +176,7 @@ void SetupNewGas() {
 
     // Thermal motion.
     std::cout << std::endl;
-    std::cout << "Thermal motion? [Y/n] (Will override the option passed at program launch)" << std::endl;
+    std::cout << "Enable thermal motion? (\"Y\" for yes, anything else for no)" << std::endl;
     std::string answer;
     std::cout << std::endl;
     std::cout << ">> ";

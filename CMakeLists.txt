@@ -31,5 +31,5 @@ target_link_libraries(sim ${Geant4_LIBRARIES} Garfield::Garfield)
 target_link_libraries(gtgen Garfield::Garfield)
 
 # Compilação do projeto inteiro depende da compilação
-# do executável "sim" e do executável "gas_table".
+# do executável "sim" e do executável "gtgen".
 add_custom_target(RPC_Simulation DEPENDS sim gtgen)

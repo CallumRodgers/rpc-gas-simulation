@@ -8,22 +8,26 @@ PMDetectorConstruction::~PMDetectorConstruction()
 {
 }
 
-G4VPhysicalVolume *PMDetectorConstruction::Construct()
+/**
+ * Função para criar especificamente a geometria de detecção da RPC de vidro no CBPF.
+ * @return RPC de vidro
+ */
+G4VPhysicalVolume* PMDetectorConstruction::ConstructGlassRPC()
 {
     G4bool checkOverlaps = true;
     G4NistManager *nist  = G4NistManager::Instance();
 
     G4Material* worldMat = nist->FindOrBuildMaterial("G4_AIR");
     G4double rWorld = 1.5 * m;
-    G4Sphere* solidWorld = new G4Sphere("World", 0., rWorld, 0., 2 * CLHEP::pi, 0., CLHEP::pi);      
+    G4Sphere* solidWorld = new G4Sphere("World", 0., rWorld, 0., 2 * CLHEP::pi, 0., CLHEP::pi);
 
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "physWorld", 0, false, 0, checkOverlaps);
     G4VisAttributes* worldVis = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));
     logicWorld->SetVisAttributes(worldVis);
-    
+
     G4Material* padMat = nist->FindOrBuildMaterial("G4_Cu");
-    G4Material* borderMat = nist->FindOrBuildMaterial("G4_Cu"); 
+    G4Material* borderMat = nist->FindOrBuildMaterial("G4_Cu");
 
     G4double xPad = 14.0 * cm;
     G4double yPad = 18.0 * cm;
@@ -33,9 +37,9 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
 
     G4Box* solidPad = new G4Box("Pad", 0.5 * xPad, 0.5 * yPad, 0.5 * zPad);
     logicPad = new G4LogicalVolume(solidPad, padMat, "logicPad");
-    G4VisAttributes* PadVis = new G4VisAttributes(G4Colour(1.0, 0.5, 0.0)); 
+    G4VisAttributes* PadVis = new G4VisAttributes(G4Colour(1.0, 0.5, 0.0));
     logicPad->SetVisAttributes(PadVis);
-    G4VisAttributes* BorderVis = new G4VisAttributes(G4Colour(0, 1, 0)); 
+    G4VisAttributes* BorderVis = new G4VisAttributes(G4Colour(0, 1, 0));
 
     G4Box* solidBorderX = new G4Box("BorderX", 0.5 * borderThickness, 0.5 * yPad, 0.5 * zPad);
     G4LogicalVolume* logicBorderX = new G4LogicalVolume(solidBorderX, borderMat, "logicBorderX");
@@ -93,7 +97,7 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
             new G4PVPlacement(0, G4ThreeVector(posX + 0.5 * (xPad + borderThickness), posY + 0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerBR", logicWorld, false, 5, checkOverlaps);
         }
     }
-    
+
     // Alumínio
     G4Material* aluminium = nist->FindOrBuildMaterial("G4_Al");
     G4double aluSizeX = 128.5 * cm / 2;
@@ -165,6 +169,20 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     new G4PVPlacement(nullptr, aluPos2, logicLayer, "AlLayerPV", logicWorld, false, 0, true);
 
     return physWorld;
+}
+
+/**
+ * Função para criar o protótipo de iRPC do CMS.
+ * @return geometria da iRPC.
+ */
+G4VPhysicalVolume *PMDetectorConstruction::ConstructRPCPrototype()
+{
+
+}
+
+G4VPhysicalVolume *PMDetectorConstruction::Construct()
+{
+    return ConstructGlassRPC();
 }
 
 void PMDetectorConstruction::ConstructSDandField()

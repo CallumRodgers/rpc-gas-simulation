@@ -27,6 +27,9 @@ public:
     PMDetectorConstruction();
     virtual ~PMDetectorConstruction();
 
+    G4VPhysicalVolume* ConstructGlassRPC();
+    G4VPhysicalVolume* ConstructRPCPrototype();
+
     virtual G4VPhysicalVolume *Construct();
 
 private:
