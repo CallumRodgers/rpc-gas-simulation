@@ -7,6 +7,7 @@
 #include "G4UIExecutive.hh"
 #include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
+#include "PMAbortionHandler.hh"
 
 #include "PMPhysicsList.hh"
 #include "PMDetectorConstruction.hh"
@@ -30,6 +31,10 @@ int main(int argc, char** argv)
 
     // Action initialization
     runManager->SetUserInitialization(new PMActionInitialization());
+
+    // Salva os histogramas no caso de uma exception.
+    auto abortionHandler = new PMAbortionHandler();
+
 
     // Cria UI executive apenas se não houver macro (modo interativo)
     if (argc == 1)
@@ -62,7 +67,6 @@ int main(int argc, char** argv)
         UImanager->ApplyCommand(command + fileName);
     }
 
+    delete abortionHandler;
     delete runManager;
-
-    return 0;
 }
