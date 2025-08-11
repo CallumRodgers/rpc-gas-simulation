@@ -1,6 +1,8 @@
 #ifndef PMDETECTORCONSTRUCTION_HH
 #define PMDETECTORCONSTRUCTION_HH
 
+#include <G4FastTrack.hh>
+
 #include "G4VUserDetectorConstruction.hh"
 
 #include "G4Box.hh"
@@ -18,24 +20,42 @@
 #include "G4VisAttributes.hh"
 #include "G4Color.hh"
 #include "G4SDManager.hh"
+#include "PMMainParameters.hh"
 
 #include "PMSensitiveDetector.hh"
 
-class PMDetectorConstruction : public G4VUserDetectorConstruction
-{
-public:
-    PMDetectorConstruction();
-    virtual ~PMDetectorConstruction();
+namespace RPCGeometry {
 
-    G4VPhysicalVolume* ConstructGlassRPC();
-    G4VPhysicalVolume* ConstructRPCPrototype();
+    // Constantes para a geometria da RPC Marta.
+    constexpr G4double GAS_GAP_X_MARTA = 120.0 * cm;
+    constexpr G4double GAS_GAP_Y_MARTA = 152.0 * cm;
+    constexpr G4double GAS_GAP_Z_MARTA = 2.0 * mm;
+    // Constantes para a geometria da iRPC do CERN
+    // TODO: Substituir com a geometria correta.
+    constexpr G4double GAS_GAP_X_IRPC = 20.0 * cm;
+    constexpr G4double GAS_GAP_Y_IRPC = 20.0 * cm;
+    constexpr G4double GAS_GAP_Z_IRPC = 1.4 * mm;
 
-    virtual G4VPhysicalVolume *Construct();
+    class PMDetectorConstruction : public G4VUserDetectorConstruction
+    {
+    public:
+        explicit PMDetectorConstruction(PMMainParameters* params);
+        ~PMDetectorConstruction() override;
 
-private:
-    G4LogicalVolume *logicPad;
+        G4VPhysicalVolume* ConstructGlassRPC();
+        G4VPhysicalVolume* ConstructRPCPrototype();
 
-    virtual void ConstructSDandField();
-};
+        G4VPhysicalVolume *Construct() override;
+
+        G4Envelope *gasEnvelope;
+
+    private:
+        PMMainParameters* params;
+
+        G4LogicalVolume *logicPad;
+
+        virtual void ConstructSDandField();
+    };
+}
 
 #endif

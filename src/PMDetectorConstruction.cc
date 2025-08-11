@@ -1,7 +1,12 @@
 #include "PMDetectorConstruction.hh"
 
-PMDetectorConstruction::PMDetectorConstruction()
+#include "PMHeedModel.hh"
+
+using namespace RPCGeometry;
+
+PMDetectorConstruction::PMDetectorConstruction(PMMainParameters* params)
 {
+    this->params = params;
 }
 
 PMDetectorConstruction::~PMDetectorConstruction()
@@ -168,6 +173,9 @@ G4VPhysicalVolume* PMDetectorConstruction::ConstructGlassRPC()
     G4ThreeVector aluPos2 = G4ThreeVector(0, 0, -40 * cm);
     new G4PVPlacement(nullptr, aluPos2, logicLayer, "AlLayerPV", logicWorld, false, 0, true);
 
+    gasEnvelope = new G4Region("GasRegion");
+    gasEnvelope->AddRootLogicalVolume(logicGlassBox);
+
     return physWorld;
 }
 
@@ -180,9 +188,14 @@ G4VPhysicalVolume *PMDetectorConstruction::ConstructRPCPrototype()
 
 }
 
-G4VPhysicalVolume *PMDetectorConstruction::Construct()
-{
-    return ConstructGlassRPC();
+G4VPhysicalVolume *PMDetectorConstruction::Construct() {
+    switch (params->GetRPCType()) {
+        default:
+        case 0:
+            return ConstructGlassRPC();
+        case 1:
+            return ConstructRPCPrototype();
+    }
 }
 
 void PMDetectorConstruction::ConstructSDandField()
@@ -190,4 +203,8 @@ void PMDetectorConstruction::ConstructSDandField()
     PMSensitiveDetector *sensDet = new PMSensitiveDetector("SensitiveDetector");
     logicPad->SetSensitiveDetector(sensDet);
     G4SDManager::GetSDMpointer()->AddNewDetector(sensDet);
+
+    // Inicializando nosso modelo do Garfield++.
+    auto* heedModel = new GarfieldInterface::PMHeedModel(gasEnvelope);
+    heedModel->InitialiseGarfield(params);
 }

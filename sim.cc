@@ -12,9 +12,9 @@
 #include "PMPhysicsList.hh"
 #include "PMDetectorConstruction.hh"
 #include "PMActionInitialization.hh"
+#include "PMMainParameters.hh"
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     G4UIExecutive *ui = nullptr;
 
     #ifdef G4MULTITHREADED
@@ -23,18 +23,19 @@ int main(int argc, char** argv)
         G4RunManager *runManager = new G4RunManager;
     #endif
 
+    auto* params = new PMMainParameters();
+
     // Physics list
     runManager->SetUserInitialization(new PMPhysicsList());
 
     // Detector construction
-    runManager->SetUserInitialization(new PMDetectorConstruction());
+    runManager->SetUserInitialization(new RPCGeometry::PMDetectorConstruction(params));
 
     // Action initialization
     runManager->SetUserInitialization(new PMActionInitialization());
 
     // Salva os histogramas no caso de uma exception.
     auto abortionHandler = new PMAbortionHandler();
-
 
     // Cria UI executive apenas se não houver macro (modo interativo)
     if (argc == 1)
