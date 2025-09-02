@@ -1,4 +1,7 @@
 #include "PMPrimaryGenerator.hh"
+
+#include <G4Event.hh>
+
 #include "Randomize.hh"  
 
 PMPrimaryGenerator::PMPrimaryGenerator()
@@ -13,10 +16,15 @@ PMPrimaryGenerator::~PMPrimaryGenerator()
 
 void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
+    PrimaryFromBeam(anEvent);
+}
+
+void PMPrimaryGenerator::PrimaryFromSphere(G4Event *anEvent)
+{
     // Define a partícula (mu-)
     G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
     fParticleGun->SetParticleDefinition(particle);
-    fParticleGun->SetParticleEnergy(5. * GeV); 
+    fParticleGun->SetParticleEnergy(5. * GeV);
 
     G4double r = 1.5 * m;
     G4double theta_pos = std::acos(G4RandFlat::shoot(-1.0, 1.0));  // [0, pi]
@@ -39,5 +47,26 @@ void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 
     // --- Gera o evento ---
     fParticleGun->GeneratePrimaryVertex(anEvent);
+}
 
+void PMPrimaryGenerator::PrimaryFromBeam(G4Event *anEvent)
+{
+    // Define a partícula (mu-)
+    G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
+    fParticleGun->SetParticleDefinition(particle);
+    fParticleGun->SetParticleEnergy(5. * GeV);
+
+    G4double r = 1.5 * m;
+    G4double theta_pos = std::acos(G4RandFlat::shoot(0.9, 1.0));  // [0, pi]
+    G4double phi_pos = G4RandFlat::shoot(0., 2. * CLHEP::pi);      // [0, 2pi]
+
+    G4double x = r * std::sin(theta_pos) * std::cos(phi_pos);
+    G4double y = r * std::sin(theta_pos) * std::sin(phi_pos);
+    G4double z = r * std::cos(theta_pos);
+    G4ThreeVector pos(x, z, y);
+    fParticleGun->SetParticlePosition(pos);
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, -1.0, 0.0));
+
+    // --- Gera o evento ---
+    fParticleGun->GeneratePrimaryVertex(anEvent);
 }

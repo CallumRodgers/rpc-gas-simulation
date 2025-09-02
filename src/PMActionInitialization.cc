@@ -1,5 +1,10 @@
 #include "PMActionInitialization.hh"
 
+#include <G4RunManager.hh>
+
+#include "PMDetectorConstructionMarta.hh"
+#include "PMSteppingAction.hh"
+
 PMActionInitialization::PMActionInitialization()
 {}
 
@@ -19,4 +24,7 @@ void PMActionInitialization::Build() const
 
     PMRunAction *runAction = new PMRunAction();
     SetUserAction(runAction);
+
+    auto steppingAction = new PMSteppingAction();
+    SetUserAction(steppingAction);
 }

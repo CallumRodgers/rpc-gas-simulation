@@ -7,8 +7,8 @@ PMMainParameters::PMMainParameters() {
 
     // Inicializando com valores padrões
     rpcType = 0;
-    gasFile = "";
-    gasHV = 7000.0 * volt;
+    gasFile = "test.gas";
+    gasHV = 9000.0;
     beamEnergy = 100.0 * MeV;
 }
 

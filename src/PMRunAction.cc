@@ -4,14 +4,11 @@
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4ios.hh"
+#include "PMAnalysis.hh"
 
 PMRunAction::PMRunAction()
 {
-    G4AnalysisManager *analysisManager = G4AnalysisManager::Instance();
-    // Histogramas
-    analysisManager->CreateH1("Edep", "Total energy deposit per event", 100, 0., 1.1 * MeV);
-    analysisManager->CreateH1("HitsPerPad", "Number of hits per pad", 64, 0., 64.);
-    analysisManager->CreateH1("EdepPerPad", "Energy deposit per pad", 64, 0., 64.);
+    PMAnalysis::CreateHistogramsMarta();
 }
 
 PMRunAction::~PMRunAction()

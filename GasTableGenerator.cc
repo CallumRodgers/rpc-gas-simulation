@@ -10,7 +10,11 @@
 
 #include "Garfield/MediumMagboltz.hh"
 
-using namespace std;
+using std::cout, std::cin, std::cerr;
+using std::endl;
+using std::string, std::to_string, std::stoi;
+using std::vector;
+
 int CORES = 1;
 bool VERBOSE = false;
 

@@ -1,4 +1,4 @@
-/run/numberOfThreads 4
+/run/numberOfThreads 1
 
 /run/initialize
 

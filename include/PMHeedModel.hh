@@ -11,16 +11,26 @@
 #include "PMMainParameters.hh"
 #include "Garfield/MediumMagboltz.hh"
 #include "Garfield/GeometrySimple.hh"
-#include "Garfield/ComponentConstant.hh"
+#include "Garfield/ComponentParallelPlate.hh"
 #include "Garfield/Sensor.hh"
 #include "Garfield/TrackHeed.hh"
+#include "Garfield/AvalancheGrid.hh"
+#include "Garfield/AvalancheMicroscopic.hh"
+#include "Garfield/ViewSignal.hh"
 
 namespace GarfieldInterface {
 
     /** Partículas que devem ser simuladas no Garfield. */
-    inline const G4ParticleDefinition* INTERFACE_PARTICLES[] = {
-        G4Electron::Definition()
+    inline const G4String DELTA_ELECTRON_PARTICLES[] = {
+        "e-"
     };
+
+    /** Partículas que devem ser simuladas no Garfield. */
+    inline const G4String NEW_TRACK_PARTICLES[] = {
+        "mu-", "mu+", "e-", "e+"
+    };
+
+    constexpr bool USING_NEW_TRACK = true;
 
     class PMHeedModel : public G4VFastSimulationModel {
     public:
@@ -32,18 +42,41 @@ namespace GarfieldInterface {
 
         void DoIt(const G4FastTrack &, G4FastStep &) override;
 
-        void InitialiseGarfield(PMMainParameters* params);
+        void InitialiseGarfieldMarta(
+            G4double halfX, G4double halfY, G4double halfZ,
+            G4double hv, const G4String& gasFile,
+            G4double padX, G4double padZ
+        );
+        void InitialiseGarfieldIRPC(
+            G4double halfX, G4double halfY, G4double halfZ,
+            G4double hv, const G4String& gasFile,
+            G4int nStrips
+        );
 
     protected:
-        // Objetos do Garfield++ são prefixados com "g".
-        G4String gGasFile;
+        // Objetos do Garfield++ são prefixos com "g".
         Garfield::MediumMagboltz* gGasMedium{};
         Garfield::GeometrySimple* gGeometry{};
-        Garfield::ComponentConstant* gComp{};
+        Garfield::ComponentParallelPlate* gRPC{};
         Garfield::Sensor* gSensor{};
         Garfield::TrackHeed* gTrackHeed{};
+        Garfield::AvalancheGrid* gAvalancheGrid{};
+        Garfield::AvalancheMicroscopic* gAvalancheMicroscopic{};
+        Garfield::ViewSignal* gViewSignal{};
 
+        void DoItNewTrack(const G4FastTrack &, G4FastStep &) const;
+        void DoItDeltaElectron(const G4FastTrack &, G4FastStep &) const;
+
+    private:
+        G4double dGasGap;
+        G4double dResistivePlate;
+
+        void MakeGas(const G4String& gasFile);
+        void MakeGeometry(double halfXcm, double halfYcm, double halfZcm);
+        void SetupAvalanches(double halfXcm, double halfYcm, double halfZcm);
+        void SetupHeed();
     };
+
 }
 
 #endif

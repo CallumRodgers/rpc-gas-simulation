@@ -10,29 +10,35 @@
 #include "PMAbortionHandler.hh"
 
 #include "PMPhysicsList.hh"
-#include "PMDetectorConstruction.hh"
+#include "PMDetectorConstructionMarta.hh"
 #include "PMActionInitialization.hh"
 #include "PMMainParameters.hh"
 
 int main(int argc, char **argv) {
     G4UIExecutive *ui = nullptr;
 
-    #ifdef G4MULTITHREADED
-        G4MTRunManager *runManager = new G4MTRunManager;
-    #else
-        G4RunManager *runManager = new G4RunManager;
-    #endif
+    auto runManager = new G4MTRunManager();
+    //#ifdef G4MULTITHREADED
+    //    G4MTRunManager *runManager = new G4MTRunManager;
+    //#else
+    //    G4RunManager *runManager = new G4RunManager;
+    //#endif
 
     auto* params = new PMMainParameters();
 
     // Physics list
-    runManager->SetUserInitialization(new PMPhysicsList());
+    auto physicsList = new PMPhysicsList();
+    runManager->SetUserInitialization(physicsList);
 
     // Detector construction
-    runManager->SetUserInitialization(new RPCGeometry::PMDetectorConstruction(params));
+    runManager->SetUserInitialization(new RPCGeometry::PMDetectorConstructionMarta(params));
 
     // Action initialization
     runManager->SetUserInitialization(new PMActionInitialization());
+
+    // Precisa ser chamado após a PhysicsList ser adicionada ao runManager.
+    // Caso contrário um erro será gerado.
+    physicsList->RegisterParametrization();
 
     // Salva os histogramas no caso de uma exception.
     auto abortionHandler = new PMAbortionHandler();

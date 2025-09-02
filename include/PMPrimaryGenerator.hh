@@ -16,6 +16,9 @@ public:
 
     virtual void GeneratePrimaries(G4Event *);
 
+    virtual void PrimaryFromBeam(G4Event *);
+    virtual void PrimaryFromSphere(G4Event *);
+
 private:
     G4ParticleGun *fParticleGun;
 };

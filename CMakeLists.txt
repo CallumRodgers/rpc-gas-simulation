@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 # Nome do projeto para o CMake.
 project(RPC_Simulation)
 
+# Encontrando ROOT.
+find_package(ROOT)
+
 # Encontrando e includindo Geant4.
 find_package(Geant4 REQUIRED ui_all vis_all)
 include(${Geant4_USE_FILE})
@@ -27,9 +30,13 @@ file(COPY ${MACRO_FILES} DESTINATION ${CMAKE_BINARY_DIR}/)
 # Gerando executáveis.
 add_executable(sim sim.cc ${sources})
 add_executable(gtgen GasTableGenerator.cc)
+add_executable(test test.cc)
+add_executable(analysis analysis.cc)
 target_link_libraries(sim ${Geant4_LIBRARIES} Garfield::Garfield)
 target_link_libraries(gtgen Garfield::Garfield)
+target_link_libraries(test Garfield::Garfield)
+target_link_libraries(analysis ${ROOT_LIBRARIES})
 
 # Compilação do projeto inteiro depende da compilação
 # do executável "sim" e do executável "gtgen".
-add_custom_target(RPC_Simulation DEPENDS sim gtgen)
+add_custom_target(RPC_Simulation DEPENDS sim gtgen analysis)
