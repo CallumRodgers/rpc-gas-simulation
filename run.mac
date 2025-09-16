@@ -1,0 +1,10 @@
+/run/initialize
+
+/vis/drawVolume
+/vis/viewer/set/viewpointThetaPhi 90 90
+/vis/viewer/zoom 2
+/vis/scene/add/trajectories
+
+/tracking/verbose 1
+
+/run/beamOn 1

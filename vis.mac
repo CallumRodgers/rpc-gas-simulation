@@ -1,0 +1,16 @@
+/vis/open TSGQt
+    
+# Cria uma cena vazia
+#/vis/scene/create
+
+# Este comando "constrói" o detector na memória.
+/run/initialize
+/vis/drawVolume
+    
+# Ajusta a câmera
+# /vis/viewer/set/viewpointThetaPhi 90 90 deg
+/vis/viewer/zoom 1.5
+    
+# Configura para mostrar as trilhas das partículas
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
