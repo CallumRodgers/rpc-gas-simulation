@@ -125,7 +125,7 @@ void PMHeedModel::DoItDeltaElectron(const G4FastTrack& track, G4FastStep& step) 
 
     const G4Track* partTrack = track.GetPrimaryTrack();
     const G4ParticleDefinition* partDef = partTrack->GetParticleDefinition();
-    G4ThreeVector pos    = track.GetPrimaryTrackLocalPosition();
+    G4ThreeVector pos     = partTrack->GetPosition();
     G4ThreeVector dir    = partTrack->GetMomentumDirection();
     G4double globalTime     = partTrack->GetGlobalTime();
     G4double e_kin          = partTrack->GetKineticEnergy();
@@ -220,7 +220,7 @@ void PMHeedModel::DoItNewTrack(const G4FastTrack& track, G4FastStep& step) const
 
     const G4Track* partTrack = track.GetPrimaryTrack();
     const G4ParticleDefinition* partDef = partTrack->GetParticleDefinition();
-    G4ThreeVector pos    = partTrack->GetPosition();
+    G4ThreeVector pos    = track.GetPrimaryTrackLocalPosition();
     G4ThreeVector dir    = partTrack->GetMomentumDirection();
     G4double globalTime     = partTrack->GetGlobalTime();
     G4double e_kin          = partTrack->GetKineticEnergy() / eV;
@@ -259,22 +259,26 @@ void PMHeedModel::DoItNewTrack(const G4FastTrack& track, G4FastStep& step) const
     G4cout << "Simulating microscopic avalanches..." << G4endl;
 
     // Processando elétrons
+    unsigned int n = 0;
     for (const auto& cluster : gTrackHeed->GetClusters()) {
         for (const auto& electron : cluster.electrons) {
-            gAvalancheMicroscopic->AddElectron(
+            gAvalancheMicroscopic->AvalancheElectron(
                 electron.x, electron.y, electron.z, electron.t, electron.e
             );
+            n++;
         }
         depositedEnergy += cluster.energy;
     }
 
-    gAvalancheMicroscopic->ResumeAvalanche();
+    G4cout << "Deposited Energy: " << depositedEnergy * eV / keV << " keV" << G4endl;
+
+    G4cout << "Microscopic Initial: " << n << G4endl;
+    G4cout << "Microscopic Final: " << gAvalancheMicroscopic->GetNumberOfElectronEndpoints() << G4endl;
 
     // ------------------------------------
     // Processando sinal induzido pela avalanche
     // ------------------------------------
 
-    G4cout << "Final Avalanche: " << gAvalancheGrid->GetAvalancheSize() << G4endl;
     G4cout << "Processing results..." << G4endl;
 
     gSensor->ExportSignal("Plane", "signal");
@@ -468,8 +472,8 @@ void PMHeedModel::SetupAvalanches(double halfXcm, double halfYcm, double halfZcm
 
     // Por algum motivo ele trava ao usar o potencial.
     gAvalancheMicroscopic->UseWeightingPotential();
+    gAvalancheMicroscopic->EnableSignalCalculation();
     // Tempo em ns que usaremos a simulação microscópica antes de passar para a em grade.
-    gAvalancheMicroscopic->SetTimeWindow(0.0, 50.0);
 }
 
 void PMHeedModel::SetupHeed() {
