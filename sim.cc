@@ -12,6 +12,7 @@
 #include "PMPhysicsList.hh"
 #include "PMDetectorConstructionMarta.hh"
 #include "PMActionInitialization.hh"
+#include "PMDetectorConstructionIRPC.hh"
 #include "PMMainParameters.hh"
 
 int main(int argc, char **argv) {
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
     runManager->SetUserInitialization(physicsList);
 
     // Detector construction
-    runManager->SetUserInitialization(new RPCGeometry::PMDetectorConstructionMarta(params));
+    runManager->SetUserInitialization(new RPCGeometry::PMDetectorConstructionIRPC(params));
 
     // Action initialization
     runManager->SetUserInitialization(new PMActionInitialization());
