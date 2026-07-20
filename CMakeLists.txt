@@ -12,7 +12,7 @@ set(CMAKE_PREFIX_PATH ~/geant4/install:~/garfieldpp/install)
 find_package(Geant4 REQUIRED ui_all vis_all)
 include(${Geant4_USE_FILE})
 
-# Encontrando o ROOT (necessário para o Garfield).
+add_subdirectory(garfield/rpc_simulation-Callum)
 
 # Encontrando Garfield++.
 if(NOT TARGET Garfield::Garfield)
