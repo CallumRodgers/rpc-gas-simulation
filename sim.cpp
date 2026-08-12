@@ -1,23 +1,19 @@
 
 #include "G4RunManager.hh"
 
-#include "Math/IntegratorOptions.h"
-
 #include "G4UImanager.hh"
 #include "G4UIExecutive.hh"
 #include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
-#include "AbortionHandler.hpp"
+#include "src/AbortionHandler.hpp"
 
-#include "PhysicsList.hpp"
-#include "DetectorConstructionMarta.hpp"
-#include "ActionInitialization.hpp"
-#include "DetectorConstructionIRPC.hpp"
-#include "MainParameters.hpp"
+#include "src/PhysicsList.hpp"
+#include "src/DetectorConstructionMarta.hpp"
+#include "src/ActionInitialization.hpp"
+#include "src/DetectorConstructionIRPC.hpp"
+#include "src/MainParameters.hpp"
 
 int main(int argc, char **argv) {
-
-    ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("AdaptiveSingular");
 
     G4UIExecutive* ui = nullptr;
 

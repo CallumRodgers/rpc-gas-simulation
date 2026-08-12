@@ -1,7 +1,5 @@
 #include "RunAction.hpp"
 
-#include <Garfield/AvalancheMicroscopic.hh>
-
 #include "G4AnalysisManager.hh"
 #include "Analysis.hpp"
 #include "DetectorConstructionIRPC.hpp"

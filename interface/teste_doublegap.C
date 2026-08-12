@@ -29,11 +29,13 @@ using namespace Garfield;
 int main(int argc, char * argv[]) {
     // Inicialização da aplicação ROOT
     TApplication app("app", &argc, argv);
-    
+
+    auto canvas = TCanvas("canvas", "Contornos", 1200, 400);
+
     // Configuração de Threads
     int numThreads = omp_get_max_threads() / 4;
     if (numThreads < 1) numThreads = 1;
-    ROOT::EnableImplicitMT(numThreads);
+    //ROOT::EnableImplicitMT(numThreads);
     omp_set_num_threads(numThreads);
     
     std::cout << "Inicializando com " << numThreads << " threads." << std::endl;
@@ -151,7 +153,7 @@ int main(int argc, char * argv[]) {
     // =========================================================
     // 4. Secção Gráfica: Campos e Potencial Total
     // =========================================================
-    TCanvas canvas("canvas", "Contornos", 1200, 400);
+
     ViewField view;
     view.SetSensor(&sensor);
     view.SetCanvas(&canvas);

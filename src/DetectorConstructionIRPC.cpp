@@ -189,10 +189,11 @@ G4VPhysicalVolume* DetectorConstructionIRPC::Construct() {
 
 void DetectorConstructionIRPC::ConstructSDandField() {
     // Inicializando nosso modelo do Garfield++.
-    auto* heedModel = new GarfieldInterface::HeedModel(garfieldEnvelope);
-    heedModel->InitialiseGarfieldIRPC(
-        GARFIELD_VOLUME_X_IRPC / 2.0, GARFIELD_VOLUME_Y_IRPC / 2.0, GARFIELD_VOLUME_Z_IRPC / 2.0,
-        params->GetGasVoltage(), params->GetGasFile(),
-        nStrips
-    );
+    new GarfieldInterface::HeedModel(
+        garfieldEnvelope,
+        GarfieldInterface::DetectorType::iRPC,
+        {
+            .gasFile = params->GetGasFile(),
+            .voltage = params->GetGasVoltage()
+    });
 }

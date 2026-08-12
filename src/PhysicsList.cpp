@@ -30,8 +30,8 @@ void PhysicsList::RegisterParametrization()
 
     // Registering Garfield++ physics
     fastSimPhysics = new G4FastSimulationPhysics();
-    auto* modelParticles = USING_NEW_TRACK ? NEW_TRACK_PARTICLES : DELTA_ELECTRON_PARTICLES;
-    for (const G4String& particleName : NEW_TRACK_PARTICLES) {
+    auto* modelParticles = USING_NEW_TRACK ? INTERFACE_PARTICLES : DELTA_ELECTRON_PARTICLES;
+    for (const G4String& particleName : INTERFACE_PARTICLES) {
         G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
         fastSimPhysics->ActivateFastSimulation(particle->GetParticleName());
     }

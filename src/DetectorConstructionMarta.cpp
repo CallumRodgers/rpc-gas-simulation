@@ -196,11 +196,12 @@ void DetectorConstructionMarta::ConstructSDandField() {
     G4SDManager::GetSDMpointer()->AddNewDetector(sensDet);
 
     // Inicializando nosso modelo do Garfield++.
-    auto* heedModel = new GarfieldInterface::HeedModel(garfieldEnvelope);
-    heedModel->InitialiseGarfieldMarta(
-        GARFIELD_VOLUME_X_MARTA / 2.0, GARFIELD_VOLUME_Y_MARTA / 2.0, GARFIELD_VOLUME_Z_MARTA / 2.0,
-        params->GetGasVoltage(), params->GetGasFile(),
-        PAD_X_MARTA, PAD_Z_MARTA
-    );
+    new GarfieldInterface::HeedModel(
+        garfieldEnvelope,
+        GarfieldInterface::DetectorType::MARTA,
+        {
+            .gasFile = params->GetGasFile(),
+            .voltage = params->GetGasVoltage()
+    });
 }
 

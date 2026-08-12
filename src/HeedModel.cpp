@@ -15,9 +15,6 @@
 #include "Analysis.hpp"
 #include "DetectorConstructionIRPC.hpp"
 #include "DetectorConstructionMarta.hpp"
-#include "Garfield/SolidBox.hh"
-
-#include "Garfield/ViewSignal.hh"
 #include "TCanvas.h"
 
 using namespace RPC::GarfieldInterface;
@@ -30,7 +27,10 @@ struct EnergyRange {
 std::map<const G4ParticleDefinition*, EnergyRange> energyRangeMap;
 
 // Construidor.
-HeedModel::HeedModel(G4Envelope* gasRegion): G4VFastSimulationModel("Heed Model", gasRegion) {
+HeedModel::HeedModel(G4Envelope* gasRegion, const DetectorType type, const DetectorConfig& config)
+    : G4VFastSimulationModel("Heed Model", gasRegion),
+      mInterface(type, config)
+{
     // Criando ranges de energia para os quais o Garfield irá ser chamado
     // para uma dada partícula.
     EnergyRange electronRange{}, muonRange{};
@@ -45,17 +45,8 @@ HeedModel::HeedModel(G4Envelope* gasRegion): G4VFastSimulationModel("Heed Model"
     energyRangeMap.insert(PAIR(G4MuonMinus::Definition(), muonRange));
     energyRangeMap.insert(PAIR(G4MuonPlus::Definition(), muonRange));
     #undef PAIR
-}
 
-// Destruidor.
-HeedModel::~HeedModel() {
-    delete gGasMedium;
-    delete gGeometry;
-    delete gRPC;
-    delete gSensor;
-    delete gTrackHeed;
-    delete gAvalancheGrid;
-    delete gAvalancheMicroscopic;
+    mInterface.prepareDetectors();
 }
 
 /**
@@ -68,10 +59,8 @@ HeedModel::~HeedModel() {
  */
 G4bool HeedModel::ModelTrigger(const G4FastTrack& track) {
     G4cout << "ModelTrigger" << G4endl;
-    auto pos = track.GetPrimaryTrackLocalPosition() / cm;
     int m;
     double epsM;
-    G4cout << "Pos: " << pos << G4endl;
     if (true) { // Por algum motivo os índices começam do 1 no getLayer().
         G4double e_kin = track.GetPrimaryTrack()->GetKineticEnergy();
         EnergyRange range = energyRangeMap.at(track.GetPrimaryTrack()->GetParticleDefinition());
@@ -91,17 +80,9 @@ G4bool HeedModel::ModelTrigger(const G4FastTrack& track) {
  */
 G4bool HeedModel::IsApplicable(const G4ParticleDefinition& partDef) {
     G4cout << "IsApplicable" << G4endl;
-    if (USING_NEW_TRACK) {
-        for (const G4String& particleName : NEW_TRACK_PARTICLES) {
-            if (particleName == partDef.GetParticleName()) {
-                return true;
-            }
-        }
-    } else {
-        for (const G4String& particleName : DELTA_ELECTRON_PARTICLES) {
-            if (particleName == partDef.GetParticleName()) {
-                return true;
-            }
+    for (const G4String& particleName : INTERFACE_PARTICLES) {
+        if (particleName == partDef.GetParticleName()) {
+            return true;
         }
     }
     return false;
@@ -116,25 +97,6 @@ G4bool HeedModel::IsApplicable(const G4ParticleDefinition& partDef) {
  * @param step
  */
 void HeedModel::DoIt(const G4FastTrack& track, G4FastStep& step) {
-    if (USING_NEW_TRACK) {
-        DoItNewTrack(track, step);
-    } else {
-        DoItDeltaElectron(track, step);
-    }
-}
-
-void HeedModel::DoItDeltaElectron(const G4FastTrack& track, G4FastStep& step) const {
-
-    G4cout << "Entering Garfield Interface..." << G4endl;
-
-
-}
-
-/**
- * Executa o modelo NewTrack() do Heed.
- */
-void HeedModel::DoItNewTrack(const G4FastTrack& track, G4FastStep& step) const {
-
     G4cout << "Entering Garfield Interface..." << G4endl;
 
     // ---------------------------------------
@@ -145,333 +107,42 @@ void HeedModel::DoItNewTrack(const G4FastTrack& track, G4FastStep& step) const {
 
     const G4Track* partTrack = track.GetPrimaryTrack();
     const G4ParticleDefinition* partDef = partTrack->GetParticleDefinition();
-    G4ThreeVector pos    = track.GetPrimaryTrackLocalPosition();
+    G4ThreeVector pos       = track.GetPrimaryTrackLocalPosition();
     G4ThreeVector dir    = partTrack->GetMomentumDirection();
     G4double globalTime     = partTrack->GetGlobalTime();
     G4double e_kin          = partTrack->GetKineticEnergy() / eV;
 
-    G4double depositedEnergy = 0.0;
-
-    double x_min, x_max, y_min, y_max, z_min, z_max;
-    gRPC->GetBoundingBox(x_min, y_min, z_min, x_max, y_max, z_max);
-
-    G4cout << "Box: From (" << x_min << ", " << y_min << ", " << z_min << ") to (" << x_max << ", " << y_max << ", " << z_max << ")" << G4endl;
+    G4cout << "Particle Type: " << partDef->GetParticleName() << G4endl;
     G4cout << "Particle Position: " << pos / cm << G4endl;
     G4cout << "Particle Direction: " << dir << G4endl;
     G4cout << "Particle Time: " << globalTime << G4endl;
     G4cout << "Particle Energy: " << e_kin << G4endl;
 
-    // -------------------------
-    // Executando Heed
-    // -------------------------
-
-    G4cout << "Executing Heed..." << G4endl;
-
-    auto posCm = pos / cm;
-
-    G4cout << "Medium: " << gRPC->GetMedium(posCm.x(), posCm.y(), posCm.z()) << G4endl;
-
-    gTrackHeed->SetParticle(partDef->GetParticleName());
-    gTrackHeed->SetKineticEnergy(e_kin);
-    gTrackHeed->NewTrack(
-        posCm.x(), posCm.y(), posCm.z(),
-        globalTime / ns,
-        dir.x(), dir.y(), dir.z()
-    );
-
-    // Criando grade.
-    int stepsPerCm = 1e4;
-    double xzSize = 0.05;
-    double halfYcm = Geometry::GARFIELD_VOLUME_Y_IRPC / 2;
-    auto areaMinVector = G4ThreeVector(posCm.x() - xzSize, -halfYcm, posCm.z() - xzSize);
-    auto areaMaxVector = G4ThreeVector(posCm.x() + xzSize, halfYcm, posCm.z() + xzSize);
-    gAvalancheGrid->SetGrid(
-        areaMinVector.x(), areaMaxVector.x(), 5, // X axis.
-        areaMinVector.y(), areaMaxVector.y(), static_cast<int>(2 * halfYcm * stepsPerCm), // Y axis.
-        areaMinVector.z(), areaMaxVector.z(), 5 // Z axis.
-    );
-    gAvalancheGrid->SetMaxAvalancheSize(1e10);
-
-
-    // -----------------------------------
-    // Gerando avalanches a partir das ionizações secundárias
-    // -----------------------------------
-
-    G4cout << "Simulating microscopic avalanches..." << G4endl;
-
-    // Processando elétrons
-    for (const auto& cluster : gTrackHeed->GetClusters()) {
-        for (const auto& electron : cluster.electrons) {
-            gAvalancheMicroscopic->AvalancheElectron(
-                electron.x, electron.y, electron.z, electron.t, electron.e
-            );
-            gAvalancheGrid->AddElectrons(gAvalancheMicroscopic);
-        }
-        depositedEnergy += cluster.energy;
+    auto type = ParticleType::MUON_MINUS; // default.
+    if (partDef == G4Electron::Definition()) {
+        type = ParticleType::ELECTRON;
+    } else if (partDef == G4Positron::Definition()) {
+        type = ParticleType::POSITRON;
+    } else if (partDef == G4MuonMinus::Definition()) {
+        type = ParticleType::MUON_MINUS;
+    } else if (partDef == G4MuonPlus::Definition()) {
+        type = ParticleType::MUON_PLUS;
     }
 
-    G4cout << "Starting grid avalanche..." << G4endl;
+    mInterface.transmit({
+        .type = type,
+        .position = vec3(pos.x() / cm, pos.y() / cm, pos.z() / cm),
+        .momentum = vec3(dir.x(), dir.y(), dir.z()),
+        .time = globalTime,
+        .energy = e_kin
+    });
 
-    gAvalancheGrid->StartGridAvalanche();
+    G4cout << "Transporting particle to after the volume" << G4endl;
 
-    // ------------------------------------
-    // Processando sinal induzido pela avalanche
-    // ------------------------------------
+    G4ThreeVector min, max;
+    track.GetEnvelopeSolid()->BoundingLimits(min, max);
 
-    G4cout << "Processing results..." << G4endl;
+    step.ProposePrimaryTrackFinalPosition(G4ThreeVector(pos.x(), min.y(), pos.z()));
 
-    G4cout << "Deposited Energy: " << depositedEnergy * eV / keV << " keV" << G4endl;
-
-    G4cout << "Avalanche Initial: " << gAvalancheGrid->GetAmountOfStartingElectrons() << G4endl;
-    G4cout << "Avalanche Final: " << gAvalancheGrid->GetAvalancheSize() << G4endl;
-
-    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-
-    G4int heatMapId = analysisManager->GetH2Id("HeatMap");
-
-    for (int strip = 0; strip < Geometry::nStrips; strip++) {
-        G4String stripNumString = std::to_string(strip);
-        G4int signalId = analysisManager->GetH1Id("signal_" + stripNumString);
-        G4int chargeId = analysisManager->GetH1Id("charge_" + stripNumString);
-
-        G4String label = "strip" + stripNumString;
-
-        for (int bin = 0; bin < Analysis::SIGNAL_WINDOW_BINS; bin++) {
-            double signal = gSensor->GetSignal(label, bin);
-
-            double time = bin / Analysis::SIGNAL_WINDOW_NS;
-            analysisManager->FillH1(signalId, time, signal);
-        }
-
-        gSensor->IntegrateSignal(label);
-
-        for (int bin = 0; bin < Analysis::SIGNAL_WINDOW_BINS; bin++) {
-            double charge = gSensor->GetSignal(label, bin);
-
-            double time = bin / Analysis::SIGNAL_WINDOW_NS;
-            analysisManager->FillH1(chargeId, time, charge);
-        }
-
-        G4double range = Geometry::GARFIELD_VOLUME_Z_IRPC;
-        G4double z = -range / 2.0 + (strip + 0.5) * (range / Geometry::nStrips);
-        analysisManager->FillH2(heatMapId, z, 0.0, gSensor->GetSignal(label, Analysis::SIGNAL_WINDOW_BINS - 1));
-    }
-
-    // ---------------------
-    // Finalizando interface
-    // ---------------------
-
-    G4cout << "Cleaning up interface..." << G4endl;
-
-    gSensor->ClearSignal();
-
-    // Retransferindo a partícula ao Geant4.
-    step.KillPrimaryTrack();
-
-    G4cout << "Garfield Interface finished." << G4endl;
+    G4cout << "Exiting Garfield Interface..." << G4endl;
 }
-
-/**
- * Carregando arquivos de gás, inicializando campo elétrico, geometria, etc.
- * @param halfX Metade das dimensões da caixa do volume de gás. ATENÇÃO 1: O volume deve incluir todos os
- * gaps E as placas resistivas (e.g. vidro/bakelite). A separação dos gaps é realizada no Garfield.
- * ATENÇÃO 2: O Garfield espera que o eixo "para cima" seja o Y. Ou seja, as camadas da RPC devem planos XZ.
- * Converter se necessário a geometria do Geant4.
- * @param hv Voltagem em operação na RPC.
- * @param gasFile Arquivo de gás (gerado pelo Magboltz) a ser usado na simulação.
- * @param padX Dimensões das pads (sem contar as bordas).
- */
-void HeedModel::InitialiseGarfieldMarta(
-    G4double halfX, G4double halfY, G4double halfZ,
-    G4double hv, const G4String& gasFile,
-    G4double padX, G4double padZ
-    ) {
-    double halfXcm = halfX / cm;
-    double halfYcm = halfY / cm;
-    double halfZcm = halfZ / cm;
-
-    dGasGap = 0.2 * cm;
-    dResistivePlate = 0.2 * cm;
-
-    MakeGas(gasFile);
-    MakeGeometry(halfXcm, halfYcm, halfZcm);
-
-    // -------------------
-    // RPC Component Setup
-    // -------------------
-
-    gRPC = new Garfield::ComponentParallelPlate();
-
-    G4double epGas = 1.0;
-    G4double epGlass = 1.0;
-    // As espessuras estão em [cm], conforme o Garfield espera.
-    G4double dGap = dGasGap / cm;
-    G4double dGlass = dResistivePlate / cm;
-    std::vector eps             = {epGlass, epGas, epGlass, epGas, epGlass};
-    std::vector thickness       = {dGlass, dGap, dGlass, dGap, dGlass};
-    //std::vector resistiveLayers = {0, 2, 4}; // Índices das placas resistivas.
-
-    const unsigned int N = thickness.size();
-    assert(eps.size() == N);
-    gRPC->Setup(N, eps, thickness, hv);
-    gRPC->SetGeometry(gGeometry);
-
-    // -------------------
-    // Sensor Setup
-    // -------------------
-
-    // Criando o Sensor.
-    gSensor = new Garfield::Sensor(gRPC);
-    // Adicionando eletrodos.
-    //int padsPerDim = 8;
-    //double padBorderX = (2.0 * halfXcm - padsPerDim * padX) / (padsPerDim + 1);
-    //double padBorderZ = (2.0 * halfZcm - padsPerDim * padZ) / (padsPerDim + 1);
-    //for (int i = 0; i < padsPerDim; i++) {
-    //    for (int j = 0; j < padsPerDim; j++) {
-    //        const G4String label = "Pad" + std::to_string(i * 8 + j);
-    //        double x = -halfXcm + padBorderX + padX * (i + 0.5);
-    //        double z = -halfZcm + padBorderZ + padZ * (j + 0.5);
-    //        gRPC->AddPixel(x, z, padX, padZ, label);
-    //        gSensor->AddElectrode(gRPC, label);
-    //    }
-    //}
-    //gRPC->AddPlane("Plane");
-    gSensor->AddElectrode(gRPC, "Plane");
-
-    gSensor->SetTimeWindow(
-        0.0,
-        Analysis::SIGNAL_WINDOW_NS / Analysis::SIGNAL_WINDOW_BINS,
-        Analysis::SIGNAL_WINDOW_BINS
-    );
-    gViewSignal = new Garfield::ViewSignal(gSensor);
-
-    SetupAvalanches(halfXcm, halfYcm, halfZcm);
-    SetupHeed();
-}
-
-/**
- * Carregando arquivos de gás, inicializando campo elétrico, geometria, etc.
- * @param halfX Metade das dimensões da caixa do volume de gás. ATENÇÃO 1: O volume deve incluir todos os
- * gaps E as placas resistivas (e.g. vidro/bakelite). A separação dos gaps é realizada no Garfield.
- * ATENÇÃO 2: O Garfield espera que o eixo "para cima" seja o Y. Ou seja, as camadas da RPC devem planos XZ.
- * Converter se necessário a geometria do Geant4.
- * @param hv Voltagem em operação na RPC.
- * @param gasFile Arquivo de gás (gerado pelo Magboltz) a ser usado na simulação.
- * @param isMartaRPC Se a RPC sendo simulada é a Marta (true) ou a iRPC (false).
- */
-void HeedModel::InitialiseGarfieldIRPC(
-    G4double halfX, G4double halfY, G4double halfZ,
-    G4double hv, const G4String& gasFile,
-    G4int nStrips
-    ) {
-    double halfXcm = halfX / cm;
-    double halfYcm = halfY / cm;
-    double halfZcm = halfZ / cm;
-
-    MakeGas(gasFile);
-    MakeGeometry(halfXcm, halfYcm, halfZcm);
-
-    // -------------------
-    // RPC Component Setup
-    // -------------------
-    gRPC = new Garfield::ComponentParallelPlate();
-
-    G4double epGas = 1.0;
-    G4double epBakelite = 4.0;
-    // As espessuras estão em [cm], conforme o Garfield espera.
-    G4double dGap = 0.14;
-    G4double dBakelite = 0.14;
-    //std::vector eps = {epBakelite, epGas, epBakelite, epGas, epBakelite};
-    std::vector eps = {epGas, epGas, epGas, epGas, epGas};
-    std::vector thickness = {dBakelite, dGap, dBakelite, dGap, dBakelite};
-    std::vector resistiveLayers = {0, 2, 4};
-
-    const unsigned int N = thickness.size();
-    assert(eps.size() == N);
-    gRPC->SetMedium(gGasMedium);
-    gRPC->Setup(N, eps, thickness, hv);
-    gRPC->SetGeometry(gGeometry);
-    gRPC->SetIntegrationPrecision(1e-9);
-
-    // -----------------
-    // Sensor Setup
-    // -----------------
-
-    // Criando o Sensor.
-    gSensor = new Garfield::Sensor(gRPC);
-    // Adicionando eletrodos.
-    double zBegin = -halfZcm;
-    double zStep = 2 * halfZcm / nStrips;
-    for (int i = 0; i < nStrips; i++) {
-        double z = zBegin + zStep * i;
-        G4String label = "strip" + std::to_string(i);
-        gRPC->AddStrip(z, zStep, label);
-        gSensor->AddElectrode(gRPC, label);
-
-    }
-
-    //gRPC->AddPlane("Plane");
-    //gSensor->AddElectrode(gRPC, "Plane");
-
-
-    //gRPC->EnableDebugging();
-    //gSensor->EnableDebugging();
-
-    gSensor->SetTimeWindow(
-        0.0,
-        Analysis::SIGNAL_WINDOW_NS / Analysis::SIGNAL_WINDOW_BINS,
-        Analysis::SIGNAL_WINDOW_BINS
-    );
-
-    SetupAvalanches(halfXcm, halfYcm, halfZcm);
-    SetupHeed();
-}
-
-void HeedModel::MakeGas(const G4String &gasFile) {
-    // Carregando o meio (gás) sendo simulado pelo Garfield.
-    G4cout << "Initialising Gas Medium..." << G4endl;
-    gGasMedium = new Garfield::MediumMagboltz();
-    gGasMedium->LoadGasFile(gasFile);
-    gGasMedium->Initialise(false);
-}
-
-void HeedModel::MakeGeometry(double halfXcm, double halfYcm, double halfZcm) {
-    // Criando geometria.
-    gGeometry = new Garfield::GeometrySimple();
-
-    auto box = new Garfield::SolidBox(
-        0., 0., 0., // Centralizando a caixa na origem.
-        halfXcm, halfYcm, halfZcm
-    );
-    gGeometry->AddSolid(box, gGasMedium);
-}
-
-void ElectronAttachment(double x, double y, double z, double t, int type, int level, Garfield::Medium *m) {
-    G4cout << "Electron Attached" << G4endl;
-}
-
-
-void HeedModel::SetupAvalanches(double halfXcm, double halfYcm, double halfZcm) {
-    // Criando objetos de avalanche.
-    gAvalancheMicroscopic = new Garfield::AvalancheMicroscopic(gSensor);
-    gAvalancheGrid = new Garfield::AvalancheGrid(gSensor);
-
-    gAvalancheGrid->EnableDebugging();
-
-    // Por algum motivo ele trava ao usar o potencial.
-    gAvalancheMicroscopic->UseWeightingPotential();
-    gAvalancheMicroscopic->EnableSignalCalculation();
-    // Tempo em ns que usaremos a simulação microscópica antes de passar para a em grade.
-    gAvalancheMicroscopic->SetTimeWindow(0., 0.20);
-}
-
-void HeedModel::SetupHeed() {
-    // Criando o Track.
-    gTrackHeed = new Garfield::TrackHeed(gSensor);
-    gTrackHeed->EnableDeltaElectronTransport();
-    gTrackHeed->CrossInactiveMedia(true);
-    gTrackHeed->DisableMagneticField();
-}
-
-
-
